@@ -1,5 +1,6 @@
-import Data.List
-import Maybe
+{-
+ - URL: http://code.google.com/codejam/contest/351101/dashboard#s=p0
+ -}
 
 data Item = Item { index :: Int, price :: Int }
 data Case = Case { number :: Int, input :: [String] }
@@ -25,7 +26,8 @@ solveCase c = "Case #" ++ (show $ number c) ++ ": " ++ ans
           prices = map read $ (words l3) :: [Int]
           pricelist = zip [1..] prices
           options = [(p1,p2) | p1 <- pricelist, p2 <- pricelist, p1 /= p2]
-          isValid ((i1,p1),(i2,p2)) = p1 + p2 == credit
-          ((i1,_),(i2,_)) = head $ filter isValid options
+          ((i1,_),(i2,_)) = head $ filter (isValid credit) options
           ans = (show $ min i1 i2) ++ " " ++ (show $ max i1 i2)
 
+isValid :: Int -> ((Int,Int),(Int,Int)) -> Bool
+isValid credit ((i1,p1),(i2,p2)) = p1 + p2 == credit

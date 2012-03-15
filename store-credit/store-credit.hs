@@ -13,13 +13,8 @@ main = do
     input <- fmap lines getContents
     let n = read (head input) :: Int
     let cases = zipWith Unsolved [1..] $ breakIntoCases (tail input) n 3
-    mapM_ putStrLn $ map (show.solveCase) cases
+    mapM_ putStrLn $ map (show.(solveCase solve)) cases
     
-solveCase :: Case -> Case
-solveCase c = case c of
-    Unsolved number input -> Solved number $ solve input
-    _ -> c
-
 solve :: Input -> String
 solve input = formatAnswer res1 res2
     where (l1:l2:l3:_) = input

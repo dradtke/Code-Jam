@@ -15,3 +15,7 @@ breakIntoCases input n count
     | otherwise = (take count input)
                 : breakIntoCases (drop count input) (n - 1) count
 
+solveCase :: (Input -> String) -> Case -> Case
+solveCase solve c = case c of
+    Unsolved number input -> Solved number $ solve input
+    _ -> c

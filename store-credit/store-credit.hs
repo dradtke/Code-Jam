@@ -2,32 +2,42 @@
  - URL: http://code.google.com/codejam/contest/351101/dashboard#s=p0
  -}
 
-data Item = Item { index :: Int, price :: Int }
-data Case = Case { number :: Int, input :: [String] }
+data Item = Item { index :: Int, price :: Int } deriving (Show)
+data Case = Case { number :: Int, input :: [String] } deriving (Show)
 
 main :: IO ()
 main = do
     input <- fmap lines getContents
-    let cases = zipWith Case [1..] $ breakIntoCases (tail input) 3
-    let results = map solveCase cases
-    mapM_ putStrLn results
+    let n = read (head input) :: Int
+    let cases = zipWith Case [1..] $ breakIntoCases (tail input) n 3
+    mapM_ putStrLn $ map solveCase cases
     
--- | Turns a list of input lines into a list where each element
--- | contains the lines necessary for just that case.
-breakIntoCases :: [String] -> Int -> [[String]]
-breakIntoCases [] _ = []
-breakIntoCases input count =
-    (take count input) : breakIntoCases (drop count input) count
+breakIntoCases :: [String] -> Int -> Int -> [[String]]
+breakIntoCases [] _ _ = []
+breakIntoCases input n count
+    | n < 1 = [input]
+    | otherwise = (take count input)
+                : breakIntoCases (drop count input) (n - 1) count
 
 solveCase :: Case -> String
 solveCase c = "Case #" ++ (show $ number c) ++ ": " ++ ans
     where (l1:l2:l3:_) = input c
           credit = read l1 :: Int
-          prices = map read $ (words l3) :: [Int]
-          pricelist = zip [1..] prices
-          options = [(p1,p2) | p1 <- pricelist, p2 <- pricelist, p1 /= p2]
-          ((i1,_),(i2,_)) = head $ filter (isValid credit) options
-          ans = (show $ min i1 i2) ++ " " ++ (show $ max i1 i2)
+          items = read l2 :: Int
+          prices = map read $ take items $ (words l3) :: [Int]
+          pricelist = zipWith Item [1..] prices
+          options = [(item1,item2) | item1 <- pricelist, item2 <- pricelist,
+                                    (index item1) /= (index item2),
+                                    isValid credit (item1,item2)]
+          (res1,res2) = head options
+          ans = formatAnswer res1 res2
 
-isValid :: Int -> ((Int,Int),(Int,Int)) -> Bool
-isValid credit ((i1,p1),(i2,p2)) = p1 + p2 == credit
+isValid :: Int -> (Item,Item) -> Bool
+isValid credit (item1,item2) = (price item1) + (price item2) == credit
+
+formatAnswer :: Item -> Item -> String
+formatAnswer item1 item2 = (show lowIndex) ++ " " ++ (show highIndex)
+    where i1 = index item1
+          i2 = index item2
+          lowIndex = min i1 i2
+          highIndex = max i1 i2

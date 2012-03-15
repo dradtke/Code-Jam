@@ -13,7 +13,6 @@ main = do
     mapM_ putStrLn $ map solveCase cases
     
 breakIntoCases :: [String] -> Int -> Int -> [[String]]
-breakIntoCases [] _ _ = []
 breakIntoCases input n count
     | n < 1 = [input]
     | otherwise = (take count input)

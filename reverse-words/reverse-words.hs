@@ -1,16 +1,22 @@
+{-# OPTIONS_GHC -i.. #-}
+
 {-
  - URL: http://code.google.com/codejam/contest/dashboard?c=351101#s=p1
  -}
 
-data Case = Case { number :: Int, input :: String } deriving (Show)
+import CodeJam
 
 main :: IO ()
 main = do
     input <- fmap lines getContents
     let n = read $ head input :: Int
-    let cases = zipWith Case [1..] $ take n (tail input)
-    mapM_ putStrLn $ map solveCase cases
+    let cases = zipWith Unsolved [1..] $ breakIntoCases (tail input) n 1
+    mapM_ putStrLn $ map (show.solveCase) cases
 
-solveCase :: Case -> String
-solveCase c = "Case #" ++ (show $ number c) ++ ": " ++ ans
-    where ans = unwords.reverse.words $ input c
+solveCase :: Case -> Case
+solveCase c = case c of
+    Unsolved number input -> Solved number $ solve input
+    _ -> c
+
+solve :: Input -> String
+solve input = unwords.reverse.words $ head input

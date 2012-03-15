@@ -1,26 +1,28 @@
+{-# OPTIONS_GHC -i.. #-}
+
 {-
  - URL: http://code.google.com/codejam/contest/351101/dashboard#s=p0
  -}
 
+import CodeJam
+
 data Item = Item { index :: Int, price :: Int } deriving (Show)
-data Case = Case { number :: Int, input :: [String] } deriving (Show)
 
 main :: IO ()
 main = do
     input <- fmap lines getContents
     let n = read (head input) :: Int
-    let cases = zipWith Case [1..] $ breakIntoCases (tail input) n 3
-    mapM_ putStrLn $ map solveCase cases
+    let cases = zipWith Unsolved [1..] $ breakIntoCases (tail input) n 3
+    mapM_ putStrLn $ map (show.solveCase) cases
     
-breakIntoCases :: [String] -> Int -> Int -> [[String]]
-breakIntoCases input n count
-    | n < 1 = [input]
-    | otherwise = (take count input)
-                : breakIntoCases (drop count input) (n - 1) count
+solveCase :: Case -> Case
+solveCase c = case c of
+    Unsolved number input -> Solved number $ solve input
+    _ -> c
 
-solveCase :: Case -> String
-solveCase c = "Case #" ++ (show $ number c) ++ ": " ++ ans
-    where (l1:l2:l3:_) = input c
+solve :: Input -> String
+solve input = formatAnswer res1 res2
+    where (l1:l2:l3:_) = input
           credit = read l1 :: Int
           items = read l2 :: Int
           prices = map read $ take items $ (words l3) :: [Int]
@@ -29,7 +31,6 @@ solveCase c = "Case #" ++ (show $ number c) ++ ": " ++ ans
                                     (index item1) /= (index item2),
                                     isValid credit (item1,item2)]
           (res1,res2) = head options
-          ans = formatAnswer res1 res2
 
 isValid :: Int -> (Item,Item) -> Bool
 isValid credit (item1,item2) = (price item1) + (price item2) == credit

@@ -1,3 +1,7 @@
+;
+; URL: http://code.google.com/codejam/contest/351101/dashboard#s=p1
+;
+
 (use '[clojure.string :only (join split)])
 
 (defn solve [line]

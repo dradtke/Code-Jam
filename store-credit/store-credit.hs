@@ -12,8 +12,12 @@ main :: IO ()
 main = do
     input <- fmap lines getContents
     let n = read (head input) :: Int
-    let cases = zipWith Unsolved [1..] $ breakIntoCases (tail input) n 3
+    let input' = take (n * linesPerCase) $ tail input
+    let cases = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
     mapM_ putStrLn $ map (show.(solveCase solve)) cases
+
+linesPerCase :: Int
+linesPerCase = 3
     
 solve :: Input -> String
 solve input = formatAnswer res1 res2

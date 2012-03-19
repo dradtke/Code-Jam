@@ -9,11 +9,11 @@ instance Show Case where
     show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
     show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
 
-breakIntoCases :: Input -> Int -> Int -> [Input]
-breakIntoCases input n count
-    | n <= 1 = [input]
-    | otherwise = (take count input)
-                : breakIntoCases (drop count input) (n - 1) count
+splitIntoCases :: Input -> Int -> [Input]
+splitIntoCases input n
+    | post == [] = [pre]
+    | otherwise = pre:(splitIntoCases post n)
+    where (pre,post) = splitAt n input
 
 solveCase :: (Input -> String) -> Case -> Case
 solveCase solve c = case c of

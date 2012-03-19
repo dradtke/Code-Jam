@@ -10,8 +10,12 @@ main :: IO ()
 main = do
     input <- fmap lines getContents
     let n = read $ head input :: Int
-    let cases = zipWith Unsolved [1..] $ breakIntoCases (tail input) n 1
+    let input' = take (n * linesPerCase) $ tail input
+    let cases = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
     mapM_ putStrLn $ map (show.(solveCase solve)) cases
+
+linesPerCase :: Int
+linesPerCase = 1
 
 solve :: Input -> String
 solve input = unwords.reverse.words $ head input

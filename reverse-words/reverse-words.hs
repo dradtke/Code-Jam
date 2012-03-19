@@ -9,10 +9,7 @@ import CodeJam
 main :: IO ()
 main = do
     input <- fmap lines getContents
-    let n = read $ head input :: Int
-    let input' = take (n * linesPerCase) $ tail input
-    let cases = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
-    mapM_ putStrLn $ map (show.(solveCase solve)) cases
+    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
 
 linesPerCase :: Int
 linesPerCase = 1

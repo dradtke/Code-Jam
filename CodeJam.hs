@@ -9,6 +9,12 @@ instance Show Case where
     show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
     show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
 
+getCases :: Input -> [Case]
+getCases input = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
+    where n = read $ head input :: Int
+          input' = tail input
+          linesPerCase = div (length input') n
+
 splitIntoCases :: Input -> Int -> [Input]
 splitIntoCases input n
     | post == [] = [pre]

@@ -7,12 +7,7 @@
 import CodeJam
 
 main :: IO ()
-main = do
-    input <- fmap lines getContents
-    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
-
-linesPerCase :: Int
-linesPerCase = 1
+main = codeJam solve
 
 solve :: Input -> String
 solve input = unwords.reverse.words $ head input

@@ -9,6 +9,11 @@ instance Show Case where
     show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
     show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
 
+codeJam :: (Input -> String) -> IO ()
+codeJam solve = do
+    input <- fmap lines getContents
+    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
+
 getCases :: Input -> [Case]
 getCases input = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
     where n = read $ head input :: Int

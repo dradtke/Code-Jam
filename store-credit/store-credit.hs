@@ -9,13 +9,8 @@ import CodeJam
 data Item = Item { index :: Int, price :: Int } deriving (Show)
 
 main :: IO ()
-main = do
-    input <- fmap lines getContents
-    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
+main = codeJam solve
 
-linesPerCase :: Int
-linesPerCase = 3
-    
 solve :: Input -> String
 solve input = formatAnswer res1 res2
     where (l1:l2:l3:_) = input

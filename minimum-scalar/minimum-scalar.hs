@@ -8,12 +8,7 @@ import CodeJam
 import Data.List
 
 main :: IO ()
-main = do
-    input <- fmap lines getContents
-    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
-
-linesPerCase :: Int
-linesPerCase = 3
+main = codeJam solve
 
 solve :: Input -> String
 solve input = show result

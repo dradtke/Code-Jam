@@ -7,7 +7,4 @@
 import CodeJam
 
 main :: IO ()
-main = codeJam solve
-
-solve :: Input -> String
-solve input = unwords.reverse.words $ head input
+main = codeJam (\input -> unwords.reverse.words $ head input)

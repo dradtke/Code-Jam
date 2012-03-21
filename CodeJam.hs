@@ -10,10 +10,7 @@
 -- where 'solve' takes the input (a list of strings) for one case and returns
 -- that case's result as a string.
 
-module CodeJam
-( codeJam
-, Input
-) where
+module CodeJam where
 
 -- For convenience, declare Input as a list of strings
 type Input = [String]

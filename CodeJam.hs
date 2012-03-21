@@ -13,8 +13,16 @@
 -- This only works if input for the problem begins with one line containing
 -- the number of cases followed by the input for each case. Some problems
 -- require more specialized input (such as alien language); in those cases,
--- reading input, constructing Case objects, and running solveCase must be
--- done manually.
+-- an alternate version of the method is provided named codeJam':
+--
+--   main :: IO ()
+--   main = do
+--       <read input here>
+--       let cases = makeCases inputs
+--       codeJam' solve cases
+--
+-- where inputs is a list containing the input (a list of strings) for each
+-- case, one per element.
 
 module CodeJam
 ( Input

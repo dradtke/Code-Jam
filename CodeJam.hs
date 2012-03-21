@@ -9,8 +9,23 @@
 --
 -- where 'solve' takes the input (a list of strings) for one case and returns
 -- that case's result as a string.
+--
+-- This only works if input for the problem begins with one line containing
+-- the number of cases followed by the input for each case. Some problems
+-- require more specialized input (such as alien language); in those cases,
+-- reading input, constructing Case objects, and running solveCase must be
+-- done manually.
 
-module CodeJam where
+module CodeJam
+( Input
+, Case
+, makeCases
+, codeJam
+, codeJam'
+) where
+
+
+-------------------------------- Public ---------------------------------------
 
 -- For convenience, declare Input as a list of strings
 type Input = [String]
@@ -19,10 +34,9 @@ type Input = [String]
 data Case = Unsolved { number :: Int , input :: Input }
             | Solved { number :: Int , answer :: String }
 
--- Define how to show a case. Used for displaying the final answer
-instance Show Case where
-    show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
-    show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
+-- Out of a list of inputs, construct a list of unsolved cases
+makeCases :: [Input] -> [Case]
+makeCases inputs = zipWith Unsolved [1..] inputs
 
 -- Entry point. You should call this from main
 codeJam :: (Input -> String) -> IO ()
@@ -30,9 +44,21 @@ codeJam solve = do
     input <- fmap lines getContents
     mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
 
+-- Entry point for problems where case construction needs to be done manually
+codeJam' :: (Input -> String) -> [Case] -> IO ()
+codeJam' solve cases =
+    mapM_ putStrLn $ map (show.(solveCase solve)) cases
+
+-------------------------------- Private --------------------------------------
+
+-- Define how to show a case. Used for displaying the final answer
+instance Show Case where
+    show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
+    show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
+
 -- Given the full input, returns a list of cases for it
 getCases :: Input -> [Case]
-getCases input = zipWith Unsolved [1..] $ splitIntoCases input' linesPerCase
+getCases input = makeCases $ splitIntoCases input' linesPerCase
     where n = read $ head input :: Int
           input' = tail input
           linesPerCase = div (length input') n

@@ -10,16 +10,13 @@ main = do
     input <- fmap lines getContents
     let (l:d:n:_) = map read $ words $ head input :: [Int]
     let (knownWords,patterns) = splitAt d $ tail input
-    let cases = zipWith Unsolved [1..] $ map (:[]) patterns
-    mapM_ putStrLn $ map (show.(solveCase $ solve knownWords)) cases
+    let cases = makeCases $ map (:[]) patterns
+    codeJam' (solve knownWords) cases
 
 solve :: Input -> Input -> String
 solve knownWords patterns = show $ foldl f 0 knownWords
     where pattern = convertPattern $ head patterns
-          f acc word =
-              if word `isMatch` pattern
-                  then acc + 1
-                  else acc
+          f acc word = if word `isMatch` pattern then acc + 1 else acc
 
 convertPattern :: String -> Pattern
 convertPattern [] = []
@@ -36,7 +33,4 @@ extractGroup pattern = (group,rest)
 
 isMatch :: String -> Pattern -> Bool
 isMatch [] _ = True
-isMatch (x:xs) (y:ys) =
-    if x `elem` y
-        then isMatch xs ys
-        else False
+isMatch (x:xs) (y:ys) = if x `elem` y then isMatch xs ys else False

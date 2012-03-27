@@ -6,22 +6,22 @@
 
 import CodeJam
 
-data Item = Item { index :: Int, price :: Int } deriving (Show)
+data Item = Item { index :: Int, price :: Int }
+
+instance Show Item where
+    show (Item index price) = show index
 
 main :: IO ()
 main = codeJam solve
 
 solve :: Input -> String
-solve input = (show $ index res1) ++ " " ++ (show $ index res2)
+solve input = (show res1) ++ " " ++ (show res2)
     where (l1:l2:l3:_) = input
           credit = read l1 :: Int
           items = read l2 :: Int
           prices = map read $ take items $ (words l3) :: [Int]
-          pricelist = zipWith Item [1..] prices
-          options = [(item1,item2) | item1 <- pricelist, item2 <- pricelist,
-                                    (index item1) < (index item2),
-                                    isValid credit (item1,item2)]
+          itemlist = zipWith Item [1..] prices
+          options = [(item1,item2) | item1 <- itemlist, item2 <- itemlist,
+                                     (index item1) < (index item2),
+                                     (price item1) + (price item2) == credit]
           (res1,res2) = head options
-
-isValid :: Int -> (Item,Item) -> Bool
-isValid credit (item1,item2) = (price item1) + (price item2) == credit

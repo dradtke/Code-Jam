@@ -66,16 +66,16 @@ instance Show Case where
 
 -- Given the full input, returns a list of cases for it
 getCases :: Input -> [Case]
-getCases input = makeCases $ splitIntoCases input' linesPerCase
+getCases input = makeCases $ splitIntoCases linesPerCase input'
     where n = read $ head input :: Int
           input' = tail input
           linesPerCase = div (length input') n
 
 -- Splits input into a list of smaller inputs, one for each case
-splitIntoCases :: Input -> Int -> [Input]
-splitIntoCases input n
+splitIntoCases :: Int -> Input -> [Input]
+splitIntoCases n input
     | post == [] = [pre]
-    | otherwise = pre:(splitIntoCases post n)
+    | otherwise = pre:(splitIntoCases n post)
     where (pre,post) = splitAt n input
 
 -- Uses the provided method to solve a case

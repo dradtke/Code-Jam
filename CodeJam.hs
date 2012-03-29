@@ -26,8 +26,6 @@
 
 module CodeJam
 ( Input
-, Case
-, makeCases
 , codeJam
 , codeJam'
 ) where
@@ -38,14 +36,6 @@ module CodeJam
 -- For convenience, declare Input as a list of strings
 type Input = [String]
 
--- Datatype representing a case
-data Case = Unsolved { number :: Int , input :: Input }
-            | Solved { number :: Int , answer :: String }
-
--- Out of a list of inputs, construct a list of unsolved cases
-makeCases :: [Input] -> [Case]
-makeCases inputs = zipWith Unsolved [1..] inputs
-
 -- Entry point. You should call this from main
 codeJam :: (Input -> String) -> IO ()
 codeJam solve = do
@@ -53,16 +43,24 @@ codeJam solve = do
     mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
 
 -- Entry point for problems where case construction needs to be done manually
-codeJam' :: (Input -> String) -> [Case] -> IO ()
-codeJam' solve cases =
-    mapM_ putStrLn $ map (show.(solveCase solve)) cases
+codeJam' :: [Input] -> (Input -> String) -> IO ()
+codeJam' input solve =
+    mapM_ putStrLn $ map (show.(solveCase solve)) $ makeCases input
 
 -------------------------------- Private --------------------------------------
+
+-- Datatype representing a case
+data Case = Unsolved { number :: Int , input :: Input }
+            | Solved { number :: Int , answer :: String }
 
 -- Define how to show a case. Used for displaying the final answer
 instance Show Case where
     show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
     show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
+
+-- Out of a list of inputs, construct a list of unsolved cases
+makeCases :: [Input] -> [Case]
+makeCases inputs = zipWith Unsolved [1..] inputs
 
 -- Given the full input, returns a list of cases for it
 getCases :: Input -> [Case]

@@ -12,8 +12,8 @@ main = do
     input <- fmap lines getContents
     let (l:d:n:_) = map read $ words $ head input :: [Int]
     let (knownWords,patterns) = splitAt d $ tail input
-    let cases = makeCases $ map (:[]) patterns
-    codeJam' (solve knownWords) cases
+    let input = map (:[]) patterns
+    codeJam' input (solve knownWords)
 
 solve :: Input -> Input -> String
 solve knownWords patterns = show $ foldl f 0 knownWords

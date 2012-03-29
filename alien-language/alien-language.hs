@@ -13,7 +13,7 @@ main = do
     let (l:d:n:_) = map read $ words $ head input :: [Int]
     let (knownWords,patterns) = splitAt d $ tail input
     let input = map (:[]) patterns
-    codeJam' input (solve knownWords)
+    codeJam input (solve knownWords)
 
 solve :: Input -> Input -> String
 solve knownWords patterns = show $ foldl f 0 knownWords

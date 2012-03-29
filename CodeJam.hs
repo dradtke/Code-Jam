@@ -2,7 +2,7 @@
 -- To solve a Code Jam problem, use
 --
 --   main :: IO ()
---   main = codeJam solve
+--   main = codeJam' solve
 --
 --   solve :: Input -> String
 --   solve input = ...
@@ -10,19 +10,20 @@
 -- where 'solve' takes the input (a list of strings) for one case and returns
 -- that case's result as a string.
 --
--- This only works if input for the problem begins with one line containing
--- the number of cases followed by the input for each case. Some problems
--- require more specialized input (such as alien language); in those cases,
--- an alternate version of the method is provided named codeJam':
+-- This only works if each case requires the same number of input lines.
+-- Some problems require more specialized input, and they can be solved
+-- like this:
 --
 --   main :: IO ()
 --   main = do
---       <read input here>
---       let cases = makeCases inputs
---       codeJam' solve cases
+--       let input = <read input here>
+--       codeJam input solve
 --
--- where inputs is a list containing the input (a list of strings) for each
--- case, one per element.
+-- Remember, input is expected as a list of Input's, which is equivalent
+-- to the type [[String]].
+--
+-- Both codeJam and codeJam' take care of reading the input, executing
+-- the method to solve it, and printing it to standard output.
 
 module CodeJam
 ( Input
@@ -36,15 +37,15 @@ module CodeJam
 -- For convenience, declare Input as a list of strings
 type Input = [String]
 
--- Entry point. You should call this from main
-codeJam :: (Input -> String) -> IO ()
-codeJam solve = do
-    input <- fmap lines getContents
-    mapM_ putStrLn $ map (show.(solveCase solve)) $ getCases input
+-- Entry point for problems that follow the standard input format
+codeJam' :: (Input -> String) -> IO ()
+codeJam' solve = do
+    input <- fmap (convertInput.lines) getContents
+    codeJam input solve
 
--- Entry point for problems where case construction needs to be done manually
-codeJam' :: [Input] -> (Input -> String) -> IO ()
-codeJam' input solve =
+-- Takes a list of inputs, a solve method, and solves the problem
+codeJam :: [Input] -> (Input -> String) -> IO ()
+codeJam input solve =
     mapM_ putStrLn $ map (show.(solveCase solve)) $ makeCases input
 
 -------------------------------- Private --------------------------------------
@@ -62,9 +63,9 @@ instance Show Case where
 makeCases :: [Input] -> [Case]
 makeCases inputs = zipWith Unsolved [1..] inputs
 
--- Given the full input, returns a list of cases for it
-getCases :: Input -> [Case]
-getCases input = makeCases $ splitIntoCases linesPerCase input'
+-- Programmatically determines the input for each case
+convertInput :: Input -> [Input]
+convertInput input = splitIntoCases linesPerCase input'
     where n = read $ head input :: Int
           input' = tail input
           linesPerCase = div (length input') n

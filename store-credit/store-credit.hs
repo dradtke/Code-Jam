@@ -12,7 +12,7 @@ instance Show Item where
     show (Item index price) = show index
 
 main :: IO ()
-main = codeJam solve
+main = codeJam' solve
 
 solve :: Input -> String
 solve input = (show res1) ++ " " ++ (show res2)

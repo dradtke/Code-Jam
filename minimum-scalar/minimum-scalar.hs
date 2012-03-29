@@ -8,7 +8,7 @@ import CodeJam
 import Data.List
 
 main :: IO ()
-main = codeJam solve
+main = codeJam' solve
 
 solve :: Input -> String
 solve input = show result

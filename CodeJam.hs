@@ -51,16 +51,15 @@ codeJam input solve =
 -------------------------------- Private --------------------------------------
 
 -- Datatype representing a case
-data Case = Unsolved { number :: Int , input :: Input }
-            | Solved { number :: Int , answer :: String }
+data Unsolved = Unsolved { unsolvedNumber :: Int , input :: Input }
+data Solved = Solved { solvedNumber :: Int , answer :: String }
 
 -- Define how to show a case. Used for displaying the final answer
-instance Show Case where
-    show (Unsolved number input) = "Case #" ++ (show number) ++ ": N/A"
-    show (Solved number answer) = "Case #" ++ (show number) ++ ": " ++ answer
+instance Show Solved where
+    show (Solved n ans) = "Case #" ++ (show n) ++ ": " ++ ans
 
 -- Out of a list of inputs, construct a list of unsolved cases
-makeCases :: [Input] -> [Case]
+makeCases :: [Input] -> [Unsolved]
 makeCases inputs = zipWith Unsolved [1..] inputs
 
 -- Programmatically determines the input for each case
@@ -78,7 +77,5 @@ splitIntoCases n input
     where (pre,post) = splitAt n input
 
 -- Uses the provided method to solve a case
-solveCase :: (Input -> String) -> Case -> Case
-solveCase solve c = case c of
-    Unsolved number input -> Solved number $ solve input
-    _ -> c
+solveCase :: (Input -> String) -> Unsolved -> Solved
+solveCase solve (Unsolved n input) = Solved n $ solve input

@@ -1,4 +1,5 @@
 -- A module containing some common utilities for solving Code Jam problems.
+-- Based on the work of Damien Radtke (at https://github.com/dradtke/Code-Jam)
 -- To solve a Code Jam problem, use
 --
 --   main :: IO ()
@@ -16,10 +17,10 @@
 --
 --   main :: IO ()
 --   main = do
---       let input = <read input here>
---       codeJam input solve
+--       let inputs = <read input here>
+--       codeJam solve inputs
 --
--- Remember, input is expected as a list of Input's, which is equivalent
+-- Remember, inputs is expected to be a list of Inputs, which is equivalent
 -- to the type [[String]].
 --
 -- Both codeJam and codeJam' take care of reading the input, executing
@@ -40,42 +41,30 @@ type Input = [String]
 -- Entry point for problems that follow the standard input format
 codeJam' :: (Input -> String) -> IO ()
 codeJam' solve = do
-    input <- fmap (convertInput.lines) getContents
-    codeJam input solve
+  inputs <- fmap (convertInput.lines) getContents
+  codeJam solve inputs
 
 -- Takes a list of inputs, a solve method, and solves the problem
-codeJam :: [Input] -> (Input -> String) -> IO ()
-codeJam input solve =
-    mapM_ putStrLn $ map (show.(solveCase solve)) $ makeCases input
+codeJam :: (Input -> String) -> [Input] -> IO ()
+codeJam solve inputs =
+  mapM_ putStrLn $ zipWith (++) prefixes $ map solve inputs
 
 -------------------------------- Private --------------------------------------
-
--- Datatype representing a case
-data Unsolved = Unsolved { unsolvedNumber :: Int , input :: Input }
-data Solved = Solved { solvedNumber :: Int , answer :: String }
-
--- Define how to show a case. Used for displaying the final answer
-instance Show Solved where
-    show (Solved n ans) = "Case #" ++ (show n) ++ ": " ++ ans
-
--- Out of a list of inputs, construct a list of unsolved cases
-makeCases :: [Input] -> [Unsolved]
-makeCases inputs = zipWith Unsolved [1..] inputs
 
 -- Programmatically determines the input for each case
 convertInput :: Input -> [Input]
 convertInput input = splitIntoCases linesPerCase input'
-    where n = read $ head input :: Int
-          input' = tail input
-          linesPerCase = div (length input') n
+  where n            = read $ head input :: Int
+        input'       = tail input
+        linesPerCase = div (length input') n
 
 -- Splits input into a list of smaller inputs, one for each case
 splitIntoCases :: Int -> Input -> [Input]
 splitIntoCases n input
-    | post == [] = [pre]
-    | otherwise = pre:(splitIntoCases n post)
-    where (pre,post) = splitAt n input
+  | post == []  = [pre]
+  | otherwise   = pre:(splitIntoCases n post)
+  where (pre,post) = splitAt n input
 
--- Uses the provided method to solve a case
-solveCase :: (Input -> String) -> Unsolved -> Solved
-solveCase solve (Unsolved n input) = Solved n $ solve input
+-- Provides the boilerplate prefixes for the output
+prefixes :: [String]
+prefixes = ["Case #" ++ show n ++ ": " | n <- [1..]]

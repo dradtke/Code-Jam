@@ -1,5 +1,5 @@
 -- A module containing some common utilities for solving Code Jam problems.
--- Based on the work of Damien Radtke (at https://github.com/dradtke/Code-Jam)
+-- Includes some improvements provided by Abizer Nasir (https://github.com/Abizern/Code-Jam)
 -- To solve a Code Jam problem, use
 --
 --   main :: IO ()

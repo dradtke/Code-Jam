@@ -1,27 +1,33 @@
-{-# OPTIONS_GHC -i.. #-}
-
 {-
  - URL: http://code.google.com/codejam/contest/351101/dashboard#s=p0
  -}
 
-import CodeJam
+import Control.Monad
 
-data Item = Item { index :: Int, price :: Int }
+-- Read in the number of cases and call 'solve' for each one
+main = readLn >>= \n -> mapM solve [1..n]
 
-instance Show Item where
-    show (Item index price) = show index
-
-main :: IO ()
-main = codeJam' solve
-
-solve :: Input -> String
-solve input = (show res1) ++ " " ++ (show res2)
-    where (l1:l2:l3:_) = input
-          credit = read l1 :: Int
-          items = read l2 :: Int
-          prices = map read $ take items $ (words l3) :: [Int]
-          itemlist = zipWith Item [1..] prices
-          options = [(item1,item2) | item1 <- itemlist, item2 <- itemlist,
-                                     (index item1) < (index item2),
-                                     (price item1) + (price item2) == credit]
-          (res1,res2) = head options
+-- Solve a case, passing in the case number
+solve :: Int -> IO ()
+solve i = do
+    -- Read in the variables for this case
+    credit <- readLn :: IO (Int)
+    items  <- readLn :: IO (Int)
+    prices <- readIntList
+    
+    -- Create a list of item tuples, which associates index with price
+    let itemList = zip [1..] prices
+    
+    -- Use a list comprehension to find all item pairs whose prices
+    -- add up to the available credit. Since we know there will be
+    -- one and only one, we can take the head of the list and extract
+    -- the indices of each item
+    let ((j,_),(k,_)) = head $ [(a,b) | a <- itemList, b <- itemList,
+                        (fst a) < (fst b), (snd a) + (snd b) == credit]
+                                        
+    -- Display the result
+    putStrLn $ "Case #" ++ show i ++ ": " ++ show j ++ " " ++ show k
+    
+-- Read a list of Int's from standard input
+readIntList :: IO [Int]
+readIntList = getLine >>= \l -> return (fmap read $ words l)
